@@ -2,6 +2,7 @@ import io.ktor.server.application.*
 import models.Users
 import org.ktorm.database.Database
 import org.ktorm.dsl.insert
+import org.ktorm.logging.Slf4jLoggerAdapter
 import java.time.LocalDateTime
 
 fun Application.configureDatabase() {
@@ -9,7 +10,8 @@ fun Application.configureDatabase() {
         url = Config.DB_URL,
         driver = Config.DB_DRIVER,
         user = Config.DB_USER,
-        password = Config.DB_PASSWORD
+        password = Config.DB_PASSWORD,
+        logger = Slf4jLoggerAdapter("crystal-logger")
     )
 
     // Execute the drop/create table SQL
