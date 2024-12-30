@@ -19,7 +19,7 @@ object Users : Table<User>("t_user") {
     val id = int("id").primaryKey().bindTo { it.id }
     val email = varchar("email").bindTo { it.email }
     val password = varchar("password").bindTo { it.password }
-    val isActive = boolean("isActive").bindTo { it.isActive }
+    val isActive = boolean("is_active").bindTo { it.isActive }
     val created = datetime("created").bindTo { it.created }
     val modified = datetime("modified").bindTo { it.modified }
 }

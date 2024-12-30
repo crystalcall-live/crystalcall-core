@@ -5,7 +5,7 @@ import org.ktorm.dsl.insert
 import org.ktorm.logging.Slf4jLoggerAdapter
 import java.time.LocalDateTime
 
-fun Application.configureDatabase() {
+fun Application.configureDatabase(): Database {
     val database = Database.connect(
         url = Config.DB_URL,
         driver = Config.DB_DRIVER,
@@ -24,7 +24,7 @@ fun Application.configureDatabase() {
                 id SERIAL PRIMARY KEY NOT NULL,
                 email VARCHAR(100) UNIQUE NOT NULL,
                 password VARCHAR(255) NOT NULL,
-                isActive BOOLEAN DEFAULT false,
+                is_active BOOLEAN DEFAULT false,
                 created TIMESTAMP NOT NULL, 
                 modified TIMESTAMP NOT NULL
             )
@@ -40,4 +40,6 @@ fun Application.configureDatabase() {
             set(it.modified, LocalDateTime.now())
         }
     }
+
+    return database
 }

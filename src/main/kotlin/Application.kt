@@ -6,7 +6,7 @@ fun main(args: Array<String>) {
 
 fun Application.module() {
     configureSockets()
-    configureSerialization()
+    configureSerialisation()
     configureHTTP()
     configureSecurity()
     configureRouting()
