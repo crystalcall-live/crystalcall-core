@@ -34,6 +34,7 @@ dependencies {
     implementation(libs.ktorm.core)
     implementation(libs.postgresql)
     implementation(libs.dotenv.kotlin)
+    implementation(libs.jbcrypt)
     implementation(libs.ktorm.support.postgresql)
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.kotlin.test.junit)
