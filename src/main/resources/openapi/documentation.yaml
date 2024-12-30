@@ -6,18 +6,53 @@ info:
 servers:
   - url: "http://0.0.0.0:8080"
 paths:
-  /:
-    get:
-      description: "Hello World!"
+  /login:
+    post:
+      tags:
+        - Authentication
+      summary: Logs in users.
+      description: Logs in users.
+      produces:
+        - application/json
+      parameters:
+        - in: formData
+          name: email
+          description: Email of the user
+          required: true
+          type: string
+        - in: formData
+          name: password
+          description: Password of the user
+          required: true
+          type: string
       responses:
-        "200":
-          description: "OK"
-          content:
-            text/plain:
-              schema:
-                type: "string"
-              examples:
-                Example#1:
-                  value: "Hello World!"
+        200:
+          description: OK
+        422:
+          description: Unprocessable entity
+  /signup:
+    post:
+      tags:
+        - Authentication
+      summary: Register users.
+      description: Creates new users.
+      produces:
+        - application/json
+      parameters:
+        - in: formData
+          name: email
+          description: Email of the user
+          required: true
+          type: string
+        - in: formData
+          name: password
+          description: Password of the user
+          required: true
+          type: string
+      responses:
+        201:
+          description: Created
+        400:
+          description: Bad request
 components:
   schemas: {}
