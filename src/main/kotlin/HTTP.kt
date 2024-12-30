@@ -5,9 +5,6 @@ import io.ktor.server.plugins.swagger.*
 import io.ktor.server.routing.*
 
 fun Application.configureHTTP() {
-    routing {
-        swaggerUI(path = "openapi")
-    }
     install(CORS) {
         allowMethod(HttpMethod.Options)
         allowMethod(HttpMethod.Put)
@@ -16,5 +13,6 @@ fun Application.configureHTTP() {
         allowMethod(HttpMethod.Get)
         allowMethod(HttpMethod.Post)
         allowHeader(HttpHeaders.Authorization)
+        allowHeader(HttpHeaders.ContentType)
     }
 }
