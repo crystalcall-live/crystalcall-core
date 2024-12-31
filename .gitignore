@@ -37,3 +37,6 @@ out/
 
 ### Environment Variables ###
 .env
+
+### Google OAuth
+*.googleusercontent.com.json

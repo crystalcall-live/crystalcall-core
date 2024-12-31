@@ -1,9 +1,10 @@
+import com.github.mustachejava.DefaultMustacheFactory
 import io.ktor.server.application.*
+import io.ktor.server.mustache.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import routes.authRouting
-import com.github.mustachejava.DefaultMustacheFactory
-import io.ktor.server.mustache.*
+import routes.authenticationRouting
+import routes.miscellaneousRouting
 import java.io.File
 
 fun Application.configureRouting() {
@@ -20,6 +21,7 @@ fun Application.configureRouting() {
             call.respondFile(File("src/main/resources/openapi/documentation.yaml"))
         }
 
-        authRouting()
+        authenticationRouting()
+        miscellaneousRouting()
     }
 }

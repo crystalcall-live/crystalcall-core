@@ -8,6 +8,7 @@ postgresql-version = "42.7.3"
 dotenv-kotlin-version = "6.5.0"
 jbcrypt-version = "0.4"
 
+
 [libraries]
 ktor-server-core = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktor-version" }
 ktor-server-websockets = { module = "io.ktor:ktor-server-websockets-jvm", version.ref = "ktor-version" }
@@ -28,6 +29,9 @@ ktor-server-test-host = { module = "io.ktor:ktor-server-test-host-jvm", version.
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin-version" }
 dotenv-kotlin = { module = "io.github.cdimascio:dotenv-kotlin", version.ref =  "dotenv-kotlin-version" }
 jbcrypt = { module = "org.mindrot:jbcrypt", version.ref = "jbcrypt-version" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor-version" }
+ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor-version" }
+ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor-version" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin-version" }

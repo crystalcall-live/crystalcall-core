@@ -14,3 +14,12 @@ data class AuthResponse(
     val message: String,
     val data: UserDTO? = null
 )
+
+@Serializable
+data class AuthorisationPayload(
+    val code: String,
+    val clientId: String,
+    val clientSecret: String,
+    val redirectUri: String,
+    val grantType: String
+)

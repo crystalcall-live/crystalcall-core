@@ -32,6 +32,8 @@ dependencies {
     implementation(libs.ktor.server.mustache)
     implementation(libs.ktor.server.config.yaml)
     implementation(libs.logback.classic)
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.cio)
     implementation(libs.ktorm.core)
     implementation(libs.postgresql)
     implementation(libs.dotenv.kotlin)

@@ -1,7 +1,7 @@
 package routes
 
 import configureDatabase
-import daos.creatUser
+import daos.createUser
 import daos.loginUser
 import dtos.AuthDTO
 import io.ktor.http.*
@@ -11,13 +11,13 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 
-fun Route.authRouting() {
+fun Route.authenticationRouting() {
     route("/v1/login") {
         post {
             try {
                 val data = call.receive<AuthDTO>()
                 val db = call.application.configureDatabase()
-                val response = loginUser(data, db)
+                val response = loginUser(db, data)
 
                 if (response.status == "success") {
                     call.respond(status = HttpStatusCode.OK, response)
@@ -39,7 +39,7 @@ fun Route.authRouting() {
             try {
                 val data = call.receive<AuthDTO>()
                 val db = call.application.configureDatabase()
-                val response = creatUser(data, db)
+                val response = createUser(db, data)
 
                 if (response.status == "success") {
                     call.respond(status = HttpStatusCode.Created, response)
@@ -47,7 +47,10 @@ fun Route.authRouting() {
                     call.respond(status = HttpStatusCode.UnprocessableEntity, response)
                 }
             } catch (e: BadRequestException) {
-                call.respond(status = HttpStatusCode.BadRequest, mapOf("status" to "error", "message" to "Invalid request!"))
+                call.respond(
+                    status = HttpStatusCode.BadRequest,
+                    mapOf("status" to "error", "message" to "Invalid request!")
+                )
             }
         }
     }

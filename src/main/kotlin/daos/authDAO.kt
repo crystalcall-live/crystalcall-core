@@ -8,40 +8,43 @@ import org.mindrot.jbcrypt.BCrypt
 import org.postgresql.util.PSQLException
 import java.time.LocalDateTime
 
-fun loginUser(data: AuthDTO, db: Database): AuthResponse{
+fun loginUser(db: Database, data: AuthDTO): AuthResponse{
     try {
-        db.useTransaction {
-            val s: MutableMap<String, Any> = mutableMapOf()
-            val query = db.from(Users).select(Users.columns).where { Users.email eq data.email }.map { row -> Users.createEntity(row) }.firstOrNull()
-            println("${query?.password}, ${data.email} $query heh")
-
-            val pwdIsValid = BCrypt.checkpw(data.password, query?.password)
-            if (pwdIsValid) {
-                return AuthResponse(
-                    status = "success",
-                    message = "User login successful",
-                    data = UserDTO(
-                        id = s["id"] as Int,
-                        email = s["email"].toString(),
-                        isActive = s["isActive"] as Boolean,
-                        created = s["created"].toString(),
-                        modified = s["modified"].toString()
-                    )
-                )
-            } else {
-                return AuthResponse(status = "error", message = "Invalid email or password!")
-            }
+        val user = db.useTransaction {
+            db.from(Users).select(Users.columns).where { Users.email eq data.email }
+                .map { row -> Users.createEntity(row) }.firstOrNull()
         }
+
+        if (user == null) {
+            return AuthResponse(status = "error", message = "User does not exist!")
+        }
+
+        val pwdIsValid = BCrypt.checkpw(data.password, user.password)
+        if (!pwdIsValid) {
+            return AuthResponse(status = "error", message = "Invalid email or password!")
+
+        }
+
+        return AuthResponse(
+            status = "success",
+            message = "User login successful",
+            data = UserDTO(
+                id = user.id,
+                email = user.email,
+                isActive = user.isActive,
+                created = user.created.toString(),
+                modified = user.modified.toString()
+            )
+        )
     } catch (e: PSQLException) {
         return AuthResponse(status = "error", message = "DB error: $e")
     }
 }
 
-fun creatUser(data: AuthDTO, db: Database): AuthResponse {
-    val hashedPwd = BCrypt.hashpw(data.password, BCrypt.gensalt())
-
+fun createUser(db: Database, data: AuthDTO): AuthResponse {
     try {
-        val res = db.useTransaction {
+        val hashedPwd = BCrypt.hashpw(data.password, BCrypt.gensalt())
+        db.useTransaction {
             db.insert(Users) {
                 set(it.email, data.email)
                 set(it.password, hashedPwd)
@@ -49,7 +52,6 @@ fun creatUser(data: AuthDTO, db: Database): AuthResponse {
                 set(it.modified, LocalDateTime.now())
             }
         }
-        println("$res res")
         return AuthResponse(status = "success", message = "User creation successful!")
     } catch (e: PSQLException) {
         return AuthResponse(status = "error", message = "DB error: $e")
