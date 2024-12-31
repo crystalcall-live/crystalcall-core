@@ -54,5 +54,44 @@ paths:
           description: Created
         400:
           description: Bad request
+  /google-callback:
+    post:
+      tags:
+        - Miscellaneous
+      summary: Callback endpoint for google oauth webhook.
+      description: Exchanges auth code for access/refresh tokens.
+      produces:
+        - application/json
+      parameters:
+        - in: formData
+          name: code
+          description: Authorisation code
+          required: true
+          type: string
+        - in: formData
+          name: client_id
+          description: Client ID for the application.
+          required: true
+          type: string
+        - in: formData
+          name: client_secret
+          description: Client Secret for the application.
+          required: true
+          type: string
+        - in: formData
+          name: redirect_uri
+          description: Determines where the API server redirects the user after the user completes the authorisation flow
+          required: true
+          type: string
+        - in: formData
+          name: grant_type
+          description: As defined in the OAuth 2.0 specification, this field's value must be set to authorization_code.
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+        422:
+          description: Unprocessable entity
 components:
-  schemas: {}
+  schemas: { }
