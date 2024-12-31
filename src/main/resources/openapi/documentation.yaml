@@ -4,7 +4,7 @@ info:
   description: "Backend for CrystalCall"
   version: "1.0.0"
 servers:
-  - url: "https://crystalcall-server.webo.daimones.xyz"
+  - url: "https://crystalcall-server.daimones.xyz"
 paths:
   /login:
     post:
