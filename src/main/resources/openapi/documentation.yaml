@@ -9,7 +9,7 @@ paths:
   /login:
     post:
       tags:
-        - Authentication
+        - Authentication & Authorisation
       summary: Logs in users.
       description: Logs in users.
       produces:
@@ -33,7 +33,7 @@ paths:
   /signup:
     post:
       tags:
-        - Authentication
+        - Authentication & Authorisation
       summary: Register users.
       description: Creates new users.
       produces:
@@ -57,7 +57,7 @@ paths:
   /google-callback:
     post:
       tags:
-        - Miscellaneous
+        - Authentication & Authorisation
       summary: Callback endpoint for google oauth webhook.
       description: Exchanges auth code for access/refresh tokens.
       produces:

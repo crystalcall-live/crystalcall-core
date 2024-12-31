@@ -18,8 +18,8 @@ data class AuthResponse(
 @Serializable
 data class AuthorisationPayload(
     val code: String,
-    val clientId: String,
-    val clientSecret: String,
-    val redirectUri: String,
-    val grantType: String
+    val clientId: String? = null,
+    val clientSecret: String? = null,
+    val redirectUri: String? = null,
+    val grantType: String? = null
 )
