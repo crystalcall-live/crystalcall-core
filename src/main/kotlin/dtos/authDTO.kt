@@ -3,9 +3,17 @@ package dtos
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class AuthDTO(
+data class LoginDTO(
     val email: String,
     val password: String
+)
+
+@Serializable
+data class SignupDTO(
+    val email: String,
+    val password: String,
+    val firstName: String,
+    val lastName: String
 )
 
 @Serializable

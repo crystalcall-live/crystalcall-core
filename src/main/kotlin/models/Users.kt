@@ -1,25 +1,17 @@
 package models
 
-import org.ktorm.entity.Entity
-import org.ktorm.schema.*
+import org.jetbrains.exposed.dao.id.IntIdTable
+import org.jetbrains.exposed.sql.Column
+import org.jetbrains.exposed.sql.javatime.datetime
 import java.time.LocalDateTime
 
-interface User : Entity<User> {
-    companion object : Entity.Factory<User>()
-    val id: Int
-    var email: String
-    var password: String
-    var isActive: Boolean
-    var created: LocalDateTime
-    var modified: LocalDateTime
-}
 
-
-object Users : Table<User>("t_user") {
-    val id = int("id").primaryKey().bindTo { it.id }
-    val email = varchar("email").bindTo { it.email }
-    val password = varchar("password").bindTo { it.password }
-    val isActive = boolean("is_active").bindTo { it.isActive }
-    val created = datetime("created").bindTo { it.created }
-    val modified = datetime("modified").bindTo { it.modified }
+object Users : IntIdTable() {
+    val email: Column<String> = varchar("name", length = 50).uniqueIndex()
+    val firstName: Column<String> = varchar("first_name", length = 255)
+    val lastName: Column<String> = varchar("last_name", length = 255)
+    val password: Column<String> = varchar("password", length = 100)
+    val isActive: Column<Boolean> = bool("is_active").default(false)
+    val created: Column<LocalDateTime> = datetime("created")
+    val modified: Column<LocalDateTime> = datetime("modified")
 }

@@ -1,4 +1,3 @@
-
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.ktor)
@@ -34,11 +33,15 @@ dependencies {
     implementation(libs.logback.classic)
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.cio)
-    implementation(libs.ktorm.core)
     implementation(libs.postgresql)
     implementation(libs.dotenv.kotlin)
     implementation(libs.jbcrypt)
-    implementation(libs.ktorm.support.postgresql)
+    implementation(libs.exposed.core)
+    implementation(libs.exposed.dao)
+    implementation(libs.exposed.crypt)
+    implementation(libs.exposed.jdbc)
+    implementation(libs.exposed.java.time)
+    implementation(libs.slf4j.api)
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.kotlin.test.junit)
 }

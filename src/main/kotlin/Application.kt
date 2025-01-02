@@ -4,11 +4,11 @@ fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain.main(args)
 }
 
-fun Application.module() {
+fun Application.module(testing: Boolean = false) {
     configureSockets()
     configureSerialisation()
     configureHTTP()
     configureSecurity()
     configureRouting()
-    configureDatabase()
+    configureDatabase(testing)
 }

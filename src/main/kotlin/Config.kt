@@ -8,8 +8,13 @@ object Config {
     val DB_USER: String = dotenv.get("DB_USER")
     val DB_PASSWORD: String = dotenv.get("DB_PASSWORD")
 
+    val ADMIN_USER_EMAIL: String = dotenv.get("ADMIN_USER_EMAIL")
+    val ADMIN_USER_PASSWORD: String = dotenv.get("ADMIN_USER_PASSWORD")
+
     val CLIENT_ID: String = dotenv.get("CLIENT_ID")
     val CLIENT_SECRET: String = dotenv.get("CLIENT_SECRET")
     val TOKEN_ENDPOINT: String = dotenv.get("TOKEN_ENDPOINT")
     val REDIRECT_URI: String = dotenv.get("REDIRECT_URI")
+
+    val TEST_DB_URL: String = dotenv.get("TEST_DB_URL")
 }

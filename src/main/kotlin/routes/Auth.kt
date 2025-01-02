@@ -1,11 +1,11 @@
 package routes
 
 import Config
-import configureDatabase
 import daos.createUser
 import daos.loginUser
-import dtos.AuthDTO
 import dtos.AuthorisationPayload
+import dtos.LoginDTO
+import dtos.SignupDTO
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
@@ -22,31 +22,29 @@ fun Route.authRouting() {
     route("/v1/login") {
         post {
             try {
-                val data = call.receive<AuthDTO>()
-                val db = call.application.configureDatabase()
-                val response = loginUser(db, data)
+                val data = call.receive<LoginDTO>()
+
+                val response = loginUser(data)
 
                 if (response.status == "success") {
                     call.respond(status = HttpStatusCode.OK, response)
                 } else {
-                    call.respond(status = HttpStatusCode.UnprocessableEntity, response)
+                    call.respond(status = HttpStatusCode.NotFound, response)
                 }
             } catch (e: BadRequestException) {
                 call.respond(
                     status = HttpStatusCode.BadRequest,
                     mapOf("status" to "error", "message" to "Invalid request! $e")
                 )
-            } catch (e: NoSuchElementException) {
-                call.respond(status = HttpStatusCode.NotFound, mapOf("status" to "error", "message" to "Invalid user"))
             }
         }
     }
     route("/v1/signup") {
         post {
             try {
-                val data = call.receive<AuthDTO>()
-                val db = call.application.configureDatabase()
-                val response = createUser(db, data)
+                val data = call.receive<SignupDTO>()
+
+                val response = createUser(data)
 
                 if (response.status == "success") {
                     call.respond(status = HttpStatusCode.Created, response)
