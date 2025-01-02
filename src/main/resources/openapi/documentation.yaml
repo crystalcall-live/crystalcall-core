@@ -28,8 +28,8 @@ paths:
       responses:
         200:
           description: OK
-        422:
-          description: Unprocessable entity
+        400:
+          description: Bad request
   /signup:
     post:
       tags:
@@ -42,6 +42,16 @@ paths:
         - in: formData
           name: email
           description: Email of the user
+          required: true
+          type: string
+        - in: formData
+          name: firstName
+          description: First name of the user
+          required: true
+          type: string
+        - in: formData
+          name: lastName
+          description: Last name of the user
           required: true
           type: string
         - in: formData
@@ -69,29 +79,27 @@ paths:
           required: true
           type: string
         - in: formData
-          name: client_id
+          name: clientId
           description: Client ID for the application.
           required: true
           type: string
         - in: formData
-          name: client_secret
+          name: clientSecret
           description: Client Secret for the application.
           required: true
           type: string
         - in: formData
-          name: redirect_uri
+          name: redirectUri
           description: Determines where the API server redirects the user after the user completes the authorisation flow
           required: true
           type: string
         - in: formData
-          name: grant_type
+          name: grantType
           description: As defined in the OAuth 2.0 specification, this field's value must be set to authorization_code.
           required: true
           type: string
       responses:
         200:
           description: OK
-        422:
-          description: Unprocessable entity
 components:
   schemas: { }
