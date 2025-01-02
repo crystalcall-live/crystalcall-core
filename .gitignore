@@ -40,3 +40,6 @@ out/
 
 ### Google OAuth
 *.googleusercontent.com.json
+
+### Kotlin compiler ###
+.kotlin
