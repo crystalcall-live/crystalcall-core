@@ -1,0 +1,4 @@
+package models
+
+object Meetings {
+}
