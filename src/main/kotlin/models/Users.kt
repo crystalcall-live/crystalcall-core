@@ -12,6 +12,6 @@ object Users : IntIdTable() {
     val lastName: Column<String> = varchar("last_name", length = 255)
     val password: Column<String> = varchar("password", length = 100)
     val isActive: Column<Boolean> = bool("is_active").default(false)
-    val created: Column<LocalDateTime> = datetime("created")
-    val modified: Column<LocalDateTime> = datetime("modified")
+    val created: Column<LocalDateTime> = datetime("created").default(LocalDateTime.now())
+    val modified: Column<LocalDateTime> = datetime("modified").default(LocalDateTime.now())
 }

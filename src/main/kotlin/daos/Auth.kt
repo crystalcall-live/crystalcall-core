@@ -1,7 +1,7 @@
 package daos
 
-import dtos.AuthResponse
 import dtos.LoginDTO
+import dtos.Response
 import dtos.SignupDTO
 import dtos.UserDTO
 import models.Users
@@ -10,25 +10,25 @@ import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.mindrot.jbcrypt.BCrypt
+import utils.generateTokens
 import java.time.LocalDateTime
 
-fun loginUser(data: LoginDTO): AuthResponse {
+fun loginUser(data: LoginDTO): Response {
     try {
         val user = transaction {
             Users.selectAll().where { Users.email eq data.email }.withDistinct().firstOrNull()
         }
 
         if (user == null) {
-            return AuthResponse(status = "error", message = "User does not exist!")
+            return Response.GenericResponse(status = "error", message = "User does not exist!")
         }
 
         val pwdIsValid = BCrypt.checkpw(data.password, user[Users.password])
         if (!pwdIsValid) {
-            return AuthResponse(status = "error", message = "Invalid email or password!")
-
+            return Response.GenericResponse(status = "error", message = "Invalid email or password!")
         }
 
-        return AuthResponse(
+        return Response.AuthResponse(
             status = "success",
             message = "User login successful",
             data = UserDTO(
@@ -42,11 +42,11 @@ fun loginUser(data: LoginDTO): AuthResponse {
             )
         )
     } catch (e: ExposedSQLException) {
-        return AuthResponse(status = "error", message = "DB error: $e")
+        return Response.GenericResponse(status = "error", message = "DB error: $e")
     }
 }
 
-fun createUser(data: SignupDTO): AuthResponse {
+fun createUser(data: SignupDTO): Response {
     try {
         val hashedPwd = BCrypt.hashpw(data.password, BCrypt.gensalt())
         val user = transaction {
@@ -63,10 +63,12 @@ fun createUser(data: SignupDTO): AuthResponse {
         }
 
         if (user == null) {
-            return AuthResponse(status = "error", message = "User does not exist!")
+            return Response.GenericResponse(status = "error", message = "User does not exist!")
         }
 
-        return AuthResponse(
+        val token = generateTokens(user[Users.email])
+
+        return Response.AuthResponse(
             status = "success",
             message = "User creation successful!",
             data = UserDTO(
@@ -80,6 +82,6 @@ fun createUser(data: SignupDTO): AuthResponse {
             )
         )
     } catch (e: ExposedSQLException) {
-        return AuthResponse(status = "error", message = "DB error: $e")
+        return Response.GenericResponse(status = "error", message = "DB error: $e")
     }
 }
