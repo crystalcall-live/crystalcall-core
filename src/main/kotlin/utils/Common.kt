@@ -16,7 +16,7 @@ fun generateMeetingLink(): String {
     val groups = (1..3).map {
         (1..groupSize).map { chars.random() }.joinToString("")
     }
-    return groups.joinToString("-")
+    return Config.DOMAIN + groups.joinToString("-")
 }
 
 fun generateTokens(userEmail: String): Pair<String, String> {

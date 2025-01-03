@@ -11,8 +11,8 @@ val MiddlewarePlugin = createApplicationPlugin(name = "MiddlewarePlugin") {
         val refreshToken = call.request.cookies["refreshToken"]
         val accessToken = call.request.cookies["accessToken"]
 
-        val excludedRoutes = listOf("/v1/login", "/v1/signup")
-
+        val excludedRoutes = listOf("/", "/v1/login", "/v1/signup", "/documentation.yaml")
+        
         if (call.request.uri !in excludedRoutes) {
             if (refreshToken.isNullOrEmpty() || accessToken.isNullOrEmpty()) {
                 call.respond(

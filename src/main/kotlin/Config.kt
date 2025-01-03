@@ -25,4 +25,6 @@ object Config {
     val JWT_AUDIENCE: String = dotenv.get("JWT_AUDIENCE")
     val JWT_ISSUER: String = dotenv.get("JWT_ISSUER")
     val JWT_REALM: String = dotenv.get("JWT_REALM")
+
+    val DOMAIN: String = dotenv.get("DOMAIN")
 }
