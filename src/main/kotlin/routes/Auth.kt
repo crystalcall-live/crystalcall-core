@@ -3,11 +3,8 @@ package routes
 import Config
 import daos.createUser
 import daos.loginUser
-import dtos.AuthorisationPayload
-import dtos.LoginDTO
-import dtos.SignupDTO
+import dtos.*
 import io.ktor.client.*
-import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
@@ -16,6 +13,11 @@ import io.ktor.server.plugins.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.server.util.*
+import kotlinx.serialization.json.Json
+import utils.generateTokens
+import utils.refreshAccessToken
+import java.time.Instant
 
 
 fun Route.authRouting() {
@@ -27,6 +29,29 @@ fun Route.authRouting() {
                 val response = loginUser(data)
 
                 if (response.status == "success") {
+                    val token = generateTokens(data.email)
+                    call.response.cookies.append(
+                        Cookie(
+                            name = "accessToken",
+                            value = token.first,
+                            httpOnly = true,
+                            secure = true,
+                            path = "/",
+                            maxAge = 3600,
+                            expires = Instant.now().plusSeconds(3600).toGMTDate()
+                        )
+                    )
+                    call.response.cookies.append(
+                        Cookie(
+                            name = "refreshToken",
+                            value = token.second,
+                            httpOnly = true,
+                            secure = true,
+                            path = "/",
+                            maxAge = 259200,
+                            expires = Instant.now().plusSeconds(259200).toGMTDate()
+                        )
+                    )
                     call.respond(status = HttpStatusCode.OK, response)
                 } else {
                     call.respond(status = HttpStatusCode.NotFound, response)
@@ -47,6 +72,29 @@ fun Route.authRouting() {
                 val response = createUser(data)
 
                 if (response.status == "success") {
+                    val token = generateTokens(data.email)
+                    call.response.cookies.append(
+                        Cookie(
+                            name = "accessToken",
+                            value = token.first,
+                            httpOnly = true,
+                            secure = true,
+                            path = "/",
+                            maxAge = 3600,
+                            expires = Instant.now().plusSeconds(3600).toGMTDate()
+                        )
+                    )
+                    call.response.cookies.append(
+                        Cookie(
+                            name = "refreshToken",
+                            value = token.second,
+                            httpOnly = true,
+                            secure = true,
+                            path = "/",
+                            maxAge = 259200,
+                            expires = Instant.now().plusSeconds(259200).toGMTDate()
+                        )
+                    )
                     call.respond(status = HttpStatusCode.Created, response)
                 } else {
                     call.respond(status = HttpStatusCode.UnprocessableEntity, response)
@@ -59,26 +107,64 @@ fun Route.authRouting() {
             }
         }
     }
-    route("/v1/google-callback") {
-        post {
-            val client = HttpClient(CIO)
-            val data = call.receive<AuthorisationPayload>()
-
-            val response: HttpResponse = client.post(Config.TOKEN_ENDPOINT) {
-                method = HttpMethod.Post
-                contentType(ContentType.Application.Json)
-                setBody(
-                    AuthorisationPayload(
-                        code = data.code,
-                        clientId = Config.CLIENT_ID,
-                        clientSecret = Config.CLIENT_SECRET,
-                        grantType = "authorization_code",
-                        redirectUri = Config.REDIRECT_URI
+    route("/v1/tokens/refresh") {
+        get {
+            try {
+                val refreshToken = call.response.cookies.get("refreshToken")
+                if (refreshToken != null) {
+                    call.respond(
+                        status = HttpStatusCode.OK,
+                        Response.GenericResponse(status = "error", message = "Invalid or expired token")
                     )
+                }
+                val accessToken = refreshAccessToken(refreshToken.toString())
+
+                call.respond(
+                    status = HttpStatusCode.OK,
+                    Response.TokenResponse(
+                        status = "success",
+                        message = "Token refreshed successfully!",
+                        token = accessToken.toString()
+                    )
+                )
+            } catch (e: BadRequestException) {
+                call.respond(
+                    status = HttpStatusCode.BadRequest,
+                    mapOf("status" to "error", "message" to "Invalid request!")
                 )
             }
 
-            call.respond(HttpStatusCode.OK, response.body())
+        }
+    }
+    route("/v1/google-callback") {
+        post {
+            try {
+                val client = HttpClient(CIO)
+                val data = call.receive<AuthorisationPayload>()
+
+                val response: HttpResponse = client.post(Config.TOKEN_ENDPOINT) {
+                    method = HttpMethod.Post
+                    contentType(ContentType.Application.Json)
+                    setBody(
+                        AuthorisationPayload(
+                            code = data.code,
+                            clientId = Config.CLIENT_ID,
+                            clientSecret = Config.CLIENT_SECRET,
+                            grantType = "authorization_code",
+                            redirectUri = Config.REDIRECT_URI
+                        )
+                    )
+                }
+                val jsonResponse = Json.decodeFromString<AuthorisationResponse>(response.bodyAsText())
+
+                call.respond(status = HttpStatusCode.OK, jsonResponse)
+            } catch (e: BadRequestException) {
+                call.respond(
+                    status = HttpStatusCode.BadRequest,
+                    mapOf("status" to "error", "message" to "Invalid request!")
+                )
+            }
+
         }
     }
 }
