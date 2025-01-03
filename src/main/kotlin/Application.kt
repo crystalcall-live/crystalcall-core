@@ -5,6 +5,8 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module(testing: Boolean = false) {
+    install(MiddlewarePlugin)
+
     configureSockets()
     configureSerialisation()
     configureHTTP()

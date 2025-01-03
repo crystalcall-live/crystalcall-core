@@ -110,7 +110,7 @@ fun Route.authRouting() {
     route("/v1/tokens/refresh") {
         get {
             try {
-                val refreshToken = call.response.cookies.get("refreshToken")
+                val refreshToken = call.response.cookies["refreshToken"]
                 if (refreshToken != null) {
                     call.respond(
                         status = HttpStatusCode.OK,

@@ -20,7 +20,6 @@ fun Application.configureDatabase(testing: Boolean = false) {
     transaction {
         addLogger(StdOutSqlLogger)
 
-        // Drop/create tables
         SchemaUtils.drop(Users, Meetings)
         SchemaUtils.create(Users, Meetings)
 
