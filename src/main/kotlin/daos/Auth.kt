@@ -28,7 +28,8 @@ fun loginUser(data: SigninDTO): Pair<Response, String?> {
             return Pair(Response.GenericResponse(status = "error", message = "Invalid email or password!"), null)
         }
 
-        val token = generateTokens(user[Users.email])
+        val userClaim = mapOf("email" to user[Users.email], "isActive" to user[Users.isActive])
+        val token = generateTokens(userClaim)
 
         return Pair(
             Response.AuthResponse(
@@ -72,7 +73,8 @@ fun createUser(data: SignupDTO): Pair<Response, String?> {
             return Pair(Response.GenericResponse(status = "error", message = "User does not exist!"), null)
         }
 
-        val token = generateTokens(data.email)
+        val userClaim = mapOf("email" to user[Users.email], "isActive" to user[Users.isActive])
+        val token = generateTokens(userClaim)
 
         return Pair(
             Response.AuthResponse(

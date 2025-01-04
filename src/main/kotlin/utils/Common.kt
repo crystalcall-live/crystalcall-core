@@ -5,6 +5,7 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import dtos.Response
 import io.ktor.server.application.*
+import kotlinx.serialization.ExperimentalSerializationApi
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.*
@@ -20,18 +21,19 @@ fun generateMeetingLink(): String {
     return Config.DOMAIN + groups.joinToString("-")
 }
 
-fun generateTokens(userEmail: String): Pair<String, String> {
+@OptIn(ExperimentalSerializationApi::class)
+fun generateTokens(userClaim: Map<String, Any>): Pair<String, String> {
     val accessToken = JWT.create()
         .withAudience(Config.JWT_AUDIENCE)
         .withIssuer(Config.JWT_ISSUER)
-        .withClaim("email", userEmail)
+        .withClaim("user", userClaim)
         .withExpiresAt(Date(System.currentTimeMillis() + 60 * 60 * 1000)) // Access token expires in 1 hour
         .sign(Algorithm.HMAC256(Config.JWT_SECRET))
 
     val refreshToken = JWT.create()
         .withAudience(Config.JWT_AUDIENCE)
         .withIssuer(Config.JWT_ISSUER)
-        .withClaim("email", userEmail)
+        .withClaim("user", userClaim)
         .withExpiresAt(Date(System.currentTimeMillis() + 3 * 24 * 60 * 60 * 1000)) // Refresh token expires in 3 days
         .sign(Algorithm.HMAC256(Config.JWT_SECRET))
 
@@ -50,10 +52,12 @@ fun refreshAccessToken(refreshToken: String): Response {
         if (decodedJWT.expiresAt == null || decodedJWT.expiresAt.before(Date())) {
             return Response.GenericResponse(status = "error", message = "Invalid expired token!")
         }
-        
 
-        val userEmail = decodedJWT.getClaim("email").asString()
-        val accessToken = generateTokens(userEmail).first
+
+        val userClaim = decodedJWT.getClaim("user").let {
+            it as Map<String, Any>
+        }
+        val accessToken = generateTokens(userClaim).first
 
         return Response.TokenResponse(
             status = "success",
