@@ -10,42 +10,49 @@ import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.mindrot.jbcrypt.BCrypt
+import utils.generateTokens
 import java.time.LocalDateTime
 
-fun loginUser(data: SigninDTO): Response {
+fun loginUser(data: SigninDTO): Pair<Response, String?> {
     try {
         val user = transaction {
             Users.selectAll().where { Users.email eq data.email }.withDistinct().firstOrNull()
         }
 
         if (user == null) {
-            return Response.GenericResponse(status = "error", message = "User does not exist!")
+            return Pair(Response.GenericResponse(status = "error", message = "User does not exist!"), null)
         }
 
         val pwdIsValid = BCrypt.checkpw(data.password, user[Users.password])
         if (!pwdIsValid) {
-            return Response.GenericResponse(status = "error", message = "Invalid email or password!")
+            return Pair(Response.GenericResponse(status = "error", message = "Invalid email or password!"), null)
         }
 
-        return Response.AuthResponse(
-            status = "success",
-            message = "User login successful",
-            data = UserDTO(
-                id = user[Users.id],
-                email = user[Users.email],
-                firstName = user[Users.firstName],
-                lastName = user[Users.lastName],
-                isActive = user[Users.isActive],
-                created = user[Users.created].toString(),
-                modified = user[Users.modified].toString()
-            )
+        val token = generateTokens(user[Users.email])
+
+        return Pair(
+            Response.AuthResponse(
+                status = "success",
+                message = "User login successful",
+                data = UserDTO(
+                    accessToken = token.first,
+                    id = user[Users.id],
+                    email = user[Users.email],
+                    firstName = user[Users.firstName],
+                    lastName = user[Users.lastName],
+                    isActive = user[Users.isActive],
+                    created = user[Users.created].toString(),
+                    modified = user[Users.modified].toString()
+
+                )
+            ), token.first
         )
     } catch (e: ExposedSQLException) {
-        return Response.GenericResponse(status = "error", message = "DB error: $e")
+        return Pair(Response.GenericResponse(status = "error", message = "DB error: $e"), null)
     }
 }
 
-fun createUser(data: SignupDTO): Response {
+fun createUser(data: SignupDTO): Pair<Response, String?> {
     try {
         val hashedPwd = BCrypt.hashpw(data.password, BCrypt.gensalt())
         val user = transaction {
@@ -62,23 +69,28 @@ fun createUser(data: SignupDTO): Response {
         }
 
         if (user == null) {
-            return Response.GenericResponse(status = "error", message = "User does not exist!")
+            return Pair(Response.GenericResponse(status = "error", message = "User does not exist!"), null)
         }
 
-        return Response.AuthResponse(
-            status = "success",
-            message = "User creation successful!",
-            data = UserDTO(
-                id = user[Users.id],
-                email = user[Users.email],
-                firstName = user[Users.firstName],
-                lastName = user[Users.lastName],
-                isActive = user[Users.isActive],
-                created = LocalDateTime.now().toString(),
-                modified = LocalDateTime.now().toString()
-            )
+        val token = generateTokens(data.email)
+
+        return Pair(
+            Response.AuthResponse(
+                status = "success",
+                message = "User creation successful!",
+                data = UserDTO(
+                    accessToken = token.first,
+                    id = user[Users.id],
+                    email = user[Users.email],
+                    firstName = user[Users.firstName],
+                    lastName = user[Users.lastName],
+                    isActive = user[Users.isActive],
+                    created = LocalDateTime.now().toString(),
+                    modified = LocalDateTime.now().toString()
+                )
+            ), token.first
         )
     } catch (e: ExposedSQLException) {
-        return Response.GenericResponse(status = "error", message = "DB error: $e")
+        return Pair(Response.GenericResponse(status = "error", message = "DB error: $e"), null)
     }
 }

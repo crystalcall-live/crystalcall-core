@@ -6,6 +6,7 @@ import org.jetbrains.exposed.dao.id.EntityID
 
 @Serializable
 data class UserDTO(
+    val accessToken: String,
     val email: String,
     val firstName: String,
     val lastName: String,

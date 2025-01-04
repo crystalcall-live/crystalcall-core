@@ -15,7 +15,6 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.util.*
 import kotlinx.serialization.json.Json
-import utils.generateTokens
 import utils.refreshAccessToken
 import java.time.Instant
 
@@ -28,12 +27,11 @@ fun Route.authRouting() {
 
                 val response = loginUser(data)
 
-                if (response.status == "success") {
-                    val token = generateTokens(data.email)
+                if (response.first.status == "success") {
                     call.response.cookies.append(
                         Cookie(
                             name = "refreshToken",
-                            value = token.second,
+                            value = response.second.toString(),
                             httpOnly = true,
                             secure = true,
                             path = "/v1/tokens/refresh",
@@ -41,9 +39,9 @@ fun Route.authRouting() {
                             expires = Instant.now().plusSeconds(259200).toGMTDate()
                         )
                     )
-                    call.respond(status = HttpStatusCode.OK, response)
+                    call.respond(status = HttpStatusCode.OK, response.first)
                 } else {
-                    call.respond(status = HttpStatusCode.NotFound, response)
+                    call.respond(status = HttpStatusCode.NotFound, response.first)
                 }
             } catch (e: BadRequestException) {
                 call.respond(
@@ -60,12 +58,11 @@ fun Route.authRouting() {
 
                 val response = createUser(data)
 
-                if (response.status == "success") {
-                    val token = generateTokens(data.email)
+                if (response.first.status == "success") {
                     call.response.cookies.append(
                         Cookie(
                             name = "refreshToken",
-                            value = token.second,
+                            value = response.second.toString(),
                             httpOnly = true,
                             secure = true,
                             path = "/v1/tokens/refresh",
@@ -73,9 +70,9 @@ fun Route.authRouting() {
                             expires = Instant.now().plusSeconds(259200).toGMTDate()
                         )
                     )
-                    call.respond(status = HttpStatusCode.Created, response)
+                    call.respond(status = HttpStatusCode.Created, response.first)
                 } else {
-                    call.respond(status = HttpStatusCode.UnprocessableEntity, response)
+                    call.respond(status = HttpStatusCode.UnprocessableEntity, response.first)
                 }
             } catch (e: BadRequestException) {
                 call.respond(
