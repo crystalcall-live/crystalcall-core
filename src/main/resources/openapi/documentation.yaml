@@ -4,14 +4,14 @@ info:
   description: "Backend for CrystalCall"
   version: "1.0.0"
 servers:
-  - url: "https://crystalcall-server.daimones.xyz"
+  - url: "https://crystalcall-server.daimones.xyz/v1"
 paths:
-  /login:
+  /signin:
     post:
       tags:
         - Authentication & Authorisation
-      summary: Logs in users.
-      description: Logs in users.
+      summary: Signs in users.
+      description: Signs in users.
       produces:
         - application/json
       parameters:
@@ -29,7 +29,7 @@ paths:
         200:
           description: OK
         400:
-          description: Bad request
+          description: Bad Request
   /signup:
     post:
       tags:
@@ -63,8 +63,21 @@ paths:
         201:
           description: Created
         400:
-          description: Bad request
-  /google-callback:
+          description: Bad Request
+  /tokens/refresh:
+    get:
+      tags:
+        - Authentication & Authorisation
+      summary: Refresh access token endpoint
+      description: Generates new access token
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+        400:
+          description: Bad Request
+  /oauth/google-callback:
     post:
       tags:
         - Authentication & Authorisation

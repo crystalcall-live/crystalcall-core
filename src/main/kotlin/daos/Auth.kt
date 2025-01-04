@@ -1,7 +1,7 @@
 package daos
 
-import dtos.LoginDTO
 import dtos.Response
+import dtos.SigninDTO
 import dtos.SignupDTO
 import dtos.UserDTO
 import models.Users
@@ -12,7 +12,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.mindrot.jbcrypt.BCrypt
 import java.time.LocalDateTime
 
-fun loginUser(data: LoginDTO): Response {
+fun loginUser(data: SigninDTO): Response {
     try {
         val user = transaction {
             Users.selectAll().where { Users.email eq data.email }.withDistinct().firstOrNull()

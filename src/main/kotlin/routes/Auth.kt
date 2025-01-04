@@ -21,10 +21,10 @@ import java.time.Instant
 
 
 fun Route.authRouting() {
-    route("/v1/login") {
+    route("/v1/signin") {
         post {
             try {
-                val data = call.receive<LoginDTO>()
+                val data = call.receive<SigninDTO>()
 
                 val response = loginUser(data)
 
@@ -80,7 +80,7 @@ fun Route.authRouting() {
             } catch (e: BadRequestException) {
                 call.respond(
                     status = HttpStatusCode.BadRequest,
-                    mapOf("status" to "error", "message" to "Invalid request!")
+                    mapOf("status" to "error", "message" to "${e.message}")
                 )
             }
         }
