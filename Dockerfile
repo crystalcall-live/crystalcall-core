@@ -6,6 +6,6 @@ COPY .env ./
 
 COPY . .
 
-RUN gradle build -x test
+RUN gradle build
 
 CMD ["gradle", "run"]
