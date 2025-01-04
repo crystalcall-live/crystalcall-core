@@ -10,7 +10,6 @@ import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.mindrot.jbcrypt.BCrypt
-import utils.generateTokens
 import java.time.LocalDateTime
 
 fun loginUser(data: LoginDTO): Response {
@@ -65,8 +64,6 @@ fun createUser(data: SignupDTO): Response {
         if (user == null) {
             return Response.GenericResponse(status = "error", message = "User does not exist!")
         }
-
-        val token = generateTokens(user[Users.email])
 
         return Response.AuthResponse(
             status = "success",

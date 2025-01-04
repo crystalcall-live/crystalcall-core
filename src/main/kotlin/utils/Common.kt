@@ -3,6 +3,7 @@ package utils
 import Config
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import dtos.Response
 import io.ktor.server.application.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -37,7 +38,7 @@ fun generateTokens(userEmail: String): Pair<String, String> {
     return Pair(accessToken, refreshToken)
 }
 
-fun refreshAccessToken(refreshToken: String): String? {
+fun refreshAccessToken(refreshToken: String): Response {
     try {
         val decodedJWT = JWT.require(Algorithm.HMAC256(Config.JWT_SECRET))
             .withAudience(Config.JWT_AUDIENCE)
@@ -45,10 +46,21 @@ fun refreshAccessToken(refreshToken: String): String? {
             .build()
             .verify(refreshToken)
 
-        val userEmail = decodedJWT.getClaim("email").asString()
 
-        return generateTokens(userEmail).first
+        if (decodedJWT.expiresAt == null || decodedJWT.expiresAt.before(Date())) {
+            return Response.GenericResponse(status = "error", message = "Invalid expired token!")
+        }
+        
+
+        val userEmail = decodedJWT.getClaim("email").asString()
+        val accessToken = generateTokens(userEmail).first
+
+        return Response.TokenResponse(
+            status = "success",
+            message = "Token refreshed successfully!",
+            token = accessToken
+        )
     } catch (e: Exception) {
-        return null
+        return Response.GenericResponse(status = "error", message = "Error refreshing/verifying token: $e")
     }
 }

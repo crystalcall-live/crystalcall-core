@@ -4,7 +4,7 @@ import io.ktor.server.mustache.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import routes.authRouting
-import routes.meetingRouting
+import routes.meetingsRouting
 import java.io.File
 
 fun Application.configureRouting() {
@@ -22,6 +22,6 @@ fun Application.configureRouting() {
         }
 
         authRouting()
-        meetingRouting()
+        meetingsRouting()
     }
 }

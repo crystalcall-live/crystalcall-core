@@ -32,22 +32,11 @@ fun Route.authRouting() {
                     val token = generateTokens(data.email)
                     call.response.cookies.append(
                         Cookie(
-                            name = "accessToken",
-                            value = token.first,
-                            httpOnly = true,
-                            secure = true,
-                            path = "/",
-                            maxAge = 3600,
-                            expires = Instant.now().plusSeconds(3600).toGMTDate()
-                        )
-                    )
-                    call.response.cookies.append(
-                        Cookie(
                             name = "refreshToken",
                             value = token.second,
                             httpOnly = true,
                             secure = true,
-                            path = "/",
+                            path = "/v1/tokens/refresh",
                             maxAge = 259200,
                             expires = Instant.now().plusSeconds(259200).toGMTDate()
                         )
@@ -75,22 +64,11 @@ fun Route.authRouting() {
                     val token = generateTokens(data.email)
                     call.response.cookies.append(
                         Cookie(
-                            name = "accessToken",
-                            value = token.first,
-                            httpOnly = true,
-                            secure = true,
-                            path = "/",
-                            maxAge = 3600,
-                            expires = Instant.now().plusSeconds(3600).toGMTDate()
-                        )
-                    )
-                    call.response.cookies.append(
-                        Cookie(
                             name = "refreshToken",
                             value = token.second,
                             httpOnly = true,
                             secure = true,
-                            path = "/",
+                            path = "/v1/tokens/refresh",
                             maxAge = 259200,
                             expires = Instant.now().plusSeconds(259200).toGMTDate()
                         )
@@ -117,16 +95,8 @@ fun Route.authRouting() {
                         Response.GenericResponse(status = "error", message = "Invalid or expired token")
                     )
                 }
-                val accessToken = refreshAccessToken(refreshToken.toString())
-
-                call.respond(
-                    status = HttpStatusCode.OK,
-                    Response.TokenResponse(
-                        status = "success",
-                        message = "Token refreshed successfully!",
-                        token = accessToken.toString()
-                    )
-                )
+                val response = refreshAccessToken(refreshToken.toString())
+                call.respond(status = HttpStatusCode.OK, response)
             } catch (e: BadRequestException) {
                 call.respond(
                     status = HttpStatusCode.BadRequest,
@@ -136,7 +106,7 @@ fun Route.authRouting() {
 
         }
     }
-    route("/v1/google-callback") {
+    route("/v1/oauth/google-callback") {
         post {
             try {
                 val client = HttpClient(CIO)
