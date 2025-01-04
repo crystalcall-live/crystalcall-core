@@ -4,8 +4,8 @@ import io.ktor.server.plugins.cors.routing.*
 
 fun Application.configureHTTP() {
     install(CORS) {
-        allowHost("localhost:5173")
-        allowHost("crystalcall.daimones.xyz")
+        allowHost("localhost:5173", schemes = listOf("http"))
+        allowHost("crystalcall.daimones.xyz", schemes = listOf("https"))
         allowMethod(HttpMethod.Options)
         allowMethod(HttpMethod.Put)
         allowMethod(HttpMethod.Delete)
@@ -14,5 +14,6 @@ fun Application.configureHTTP() {
         allowMethod(HttpMethod.Post)
         allowHeader(HttpHeaders.Authorization)
         allowHeader(HttpHeaders.ContentType)
+        allowCredentials = true
     }
 }
