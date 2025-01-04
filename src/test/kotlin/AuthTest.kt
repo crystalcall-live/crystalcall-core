@@ -1,5 +1,5 @@
-import dtos.LoginDTO
 import dtos.Response
+import dtos.SigninDTO
 import dtos.SignupDTO
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
@@ -20,9 +20,9 @@ class AuthTest {
             module(testing = true)
         }
 
-        val response = client.post("/v1/login") {
+        val response = client.post("/v1/signin") {
             header(HttpHeaders.ContentType, ContentType.Application.Json)
-            setBody(Json.encodeToString(LoginDTO.serializer(), LoginDTO("test@email.com", "password")))
+            setBody(Json.encodeToString(SigninDTO.serializer(), SigninDTO("test@email.com", "password")))
         }
         println(response.bodyAsText())
         val jsonResponse = json.decodeFromString<Response.AuthResponse>(response.bodyAsText())
