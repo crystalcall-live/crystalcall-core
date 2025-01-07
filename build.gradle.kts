@@ -42,6 +42,7 @@ dependencies {
     implementation(libs.exposed.jdbc)
     implementation(libs.exposed.java.time)
     implementation(libs.slf4j.api)
+    implementation(libs.commons.email2.javax)
 
     // Test dependencies
     testImplementation(libs.ktor.server.test.host)

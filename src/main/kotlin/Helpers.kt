@@ -1,11 +1,8 @@
-package utils
-
-import Config
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import dtos.Response
 import io.ktor.server.application.*
-import kotlinx.serialization.ExperimentalSerializationApi
+import org.apache.commons.mail2.javax.HtmlEmail
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.*
@@ -21,7 +18,6 @@ fun generateMeetingLink(): String {
     return Config.DOMAIN + groups.joinToString("-")
 }
 
-@OptIn(ExperimentalSerializationApi::class)
 fun generateTokens(userClaim: Map<String, Any>): Pair<String, String> {
     val accessToken = JWT.create()
         .withAudience(Config.JWT_AUDIENCE)
@@ -67,4 +63,22 @@ fun refreshAccessToken(refreshToken: String): Response {
     } catch (e: Exception) {
         return Response.GenericResponse(status = "error", message = "Error refreshing/verifying token: $e")
     }
+}
+
+fun sendEmail(email: String, name: String) {
+    val htmlEmail = HtmlEmail()
+    htmlEmail.hostName = Config.EMAIL_HOST_NAME
+    htmlEmail.setStartTLSEnabled(true)
+    htmlEmail.setSmtpPort(Config.EMAIL_PORT)
+    htmlEmail.setAuthentication(Config.EMAIL_USERNAME, Config.EMAIL_PASSWORD)
+    htmlEmail.addTo(email, name)
+    htmlEmail.setFrom("MS_0i0uEB@daimones.xyz", "CrystalCall")
+    htmlEmail.setSubject("CrystalCall: Reset Your Password")
+
+    htmlEmail.setHtmlMsg("<html><body><p>Please create new password: <a href='https://crystalcall.daimones.xyz/auth/forgot-password/${email}'>https://crystalcall.daimones.xyz/auth/forgot-password/${email}</a></p></body></html>")
+
+    // Alternative message
+    htmlEmail.setTextMsg("Your email client does not support HTML messages")
+
+    htmlEmail.send()
 }

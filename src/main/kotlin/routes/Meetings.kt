@@ -2,12 +2,12 @@ package routes
 
 import dtos.MeetingDTO
 import dtos.Response
+import generateMeetingLink
 import io.ktor.http.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import utils.generateMeetingLink
 
 fun Route.meetingsRouting() {
     authenticate {
@@ -24,7 +24,7 @@ fun Route.meetingsRouting() {
                 }
 
                 val meetingLink = generateMeetingLink()
-                
+
                 call.respond(
                     status = HttpStatusCode.OK,
                     Response.MeetingResponse(

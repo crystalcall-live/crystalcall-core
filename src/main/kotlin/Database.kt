@@ -4,7 +4,6 @@ import models.Users
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.mindrot.jbcrypt.BCrypt
-import utils.getLogger
 
 fun Application.configureDatabase(testing: Boolean = false) {
     val logger = getLogger()

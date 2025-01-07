@@ -4,13 +4,13 @@ import dtos.Response
 import dtos.SigninDTO
 import dtos.SignupDTO
 import dtos.UserDTO
+import generateTokens
 import models.Users
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.mindrot.jbcrypt.BCrypt
-import utils.generateTokens
 import java.time.LocalDateTime
 
 fun loginUser(data: SigninDTO): Pair<Response, String?> {

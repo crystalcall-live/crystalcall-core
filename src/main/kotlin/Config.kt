@@ -27,4 +27,10 @@ object Config {
     val JWT_REALM: String = dotenv.get("JWT_REALM")
 
     val DOMAIN: String = dotenv.get("DOMAIN")
+
+    val EMAIL_HOST_NAME: String = dotenv.get("EMAIL_HOST_NAME")
+    val EMAIL_USERNAME: String = dotenv.get("EMAIL_USERNAME")
+    val EMAIL_PASSWORD: String = dotenv.get("EMAIL_PASSWORD")
+    val EMAIL_PORT: Int = dotenv.get("EMAIL_PORT").toInt()
+    val FROM_EMAIL: String = dotenv.get("FROM_EMAIL")
 }

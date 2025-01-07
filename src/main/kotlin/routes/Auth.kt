@@ -15,7 +15,13 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.util.*
 import kotlinx.serialization.json.Json
-import utils.refreshAccessToken
+import models.Users
+import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
+import org.mindrot.jbcrypt.BCrypt
+import refreshAccessToken
+import sendEmail
 import java.time.Instant
 
 
@@ -46,7 +52,7 @@ fun Route.authRouting() {
             } catch (e: BadRequestException) {
                 call.respond(
                     status = HttpStatusCode.BadRequest,
-                    mapOf("status" to "error", "message" to "Invalid request! $e")
+                    Response.GenericResponse(status = "error", message = "Invalid request: ${e.message}")
                 )
             }
         }
@@ -77,7 +83,7 @@ fun Route.authRouting() {
             } catch (e: BadRequestException) {
                 call.respond(
                     status = HttpStatusCode.BadRequest,
-                    mapOf("status" to "error", "message" to "${e.message}")
+                    Response.GenericResponse(status = "error", message = "Invalid request: ${e.message}")
                 )
             }
         }
@@ -97,7 +103,7 @@ fun Route.authRouting() {
             } catch (e: BadRequestException) {
                 call.respond(
                     status = HttpStatusCode.BadRequest,
-                    mapOf("status" to "error", "message" to "Invalid request!")
+                    Response.GenericResponse(status = "error", message = "Invalid request: ${e.message}")
                 )
             }
 
@@ -128,10 +134,70 @@ fun Route.authRouting() {
             } catch (e: BadRequestException) {
                 call.respond(
                     status = HttpStatusCode.BadRequest,
-                    mapOf("status" to "error", "message" to "Invalid request!")
+                    Response.GenericResponse(status = "error", message = "Invalid request: ${e.message}")
                 )
             }
 
+        }
+    }
+    route("/v1/password/reset") {
+        post {
+            try {
+                val data = call.receive<PasswordResetPayload>()
+
+                val user = transaction {
+                    Users.selectAll().where { Users.email eq data.email }.withDistinct().firstOrNull()
+                }
+
+                if (user == null) {
+                    call.respond(
+                        status = HttpStatusCode.NotFound,
+                        Response.GenericResponse(status = "error", message = "Invalid user")
+                    )
+                }
+
+                val name = "${user!![Users.firstName]} ${user[Users.lastName]}"
+                sendEmail(data.email, name)
+
+                call.respond(
+                    status = HttpStatusCode.OK,
+                    Response.GenericResponse(status = "success", message = "Password reset email sent successfully!")
+                )
+            } catch (e: BadRequestException) {
+                call.respond(
+                    status = HttpStatusCode.BadRequest,
+                    Response.GenericResponse(status = "error", message = "Invalid request: ${e.message}")
+                )
+            }
+
+        }
+    }
+    route("/v1/password/reset/confirm") {
+        post {
+            try {
+                val data = call.receive<PasswordResetConfirmPayload>()
+
+                if (call.request.headers["x-pwd-reset"].isNullOrEmpty() || data.newPassword != data.confirmNewPassword) {
+                    call.respond(
+                        status = HttpStatusCode.UnprocessableEntity,
+                        Response.GenericResponse(status = "error", message = "Invalid password or request")
+                    )
+                }
+
+                Users.update({ Users.email eq call.request.headers["x-pwd-reset"].toString() }) {
+                    it[password] = BCrypt.hashpw(data.newPassword, BCrypt.gensalt())
+                }
+
+                call.respond(
+                    status = HttpStatusCode.OK,
+                    Response.GenericResponse(status = "success", message = "Password resetted successfully!")
+                )
+            } catch (e: BadRequestException) {
+                call.respond(
+                    status = HttpStatusCode.BadRequest,
+                    Response.GenericResponse(status = "error", message = "Invalid request: ${e.message}")
+                )
+            }
         }
     }
 }

@@ -39,3 +39,14 @@ data class TokenDTO(
     val accessToken: String,
     val refreshToken: String,
 )
+
+@Serializable
+data class PasswordResetPayload(
+    val email: String
+)
+
+@Serializable
+data class PasswordResetConfirmPayload(
+    val newPassword: String,
+    val confirmNewPassword: String
+)
