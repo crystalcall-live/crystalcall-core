@@ -114,5 +114,48 @@ paths:
       responses:
         200:
           description: OK
+  /password/reset:
+    post:
+      tags:
+        - Authentication & Authorisation
+      summary: Reset password
+      description: Resets user password
+      produces:
+        - application/json
+      parameters:
+        - in: formData
+          name: email
+          description: Email of the user
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+        400:
+          description: Bad Request
+  /password/reset/confirm:
+    post:
+      tags:
+        - Authentication & Authorisation
+      summary: Confirm reset password
+      description: Confirms reset password
+      produces:
+        - application/json
+      parameters:
+        - in: formData
+          name: newPassword
+          description: User's new password
+          required: true
+          type: string
+        - in: formData
+          name: confirmNewPassword
+          description: Confirm user's new password
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+        400:
+          description: Bad Request
 components:
   schemas: { }
