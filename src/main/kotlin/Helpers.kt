@@ -75,7 +75,38 @@ fun sendEmail(email: String, name: String) {
     htmlEmail.setFrom("MS_0i0uEB@daimones.xyz", "CrystalCall")
     htmlEmail.setSubject("CrystalCall: Reset Your Password")
 
-    htmlEmail.setHtmlMsg("<html><body><p>Please create new password: <a href='https://crystalcall.daimones.xyz/auth/forgot-password?id=${email}'>https://crystalcall.daimones.xyz/auth/forgot-password?id=${email}</a></p></body></html>")
+    val firstName = name.split(" ")[0]
+    htmlEmail.setHtmlMsg(
+        """
+        <html>
+        <body>
+        
+        <p>Hi ${firstName},</p>
+        
+        <p>We received a request to reset the password for your account. If you didn't make this request, 
+        you can ignore this email - your password won't change.</p>
+        
+        <p>To reset your password:</p>
+        <p>Click the secure link below (valid for 30 minutes):
+        <a href='https://crystalcall.daimones.xyz/auth/forgot-password?id=${email}'>link</a>.
+        You'll be taken to a page where you can create a new password.</p>
+        
+        <p>For your security:</p>
+        <p>This link will expire in 30 minutes.
+        Use a strong password that you haven't used before.
+        Never share your password with anyone</p>
+        
+        <p>If you have any issues or didn't request this reset, please contact our support team immediately at support@crystalcall.live.</p>
+        
+        <div style="margin-top: 20px; line-height: 0.8;">
+            <p style="margin: 8px 0;">Best regards,</p>
+            <p style="margin: 8px 0;">CrystalCall Team</p>
+        </div>
+        <p style="font-size: 12px;">Note: This is an automated message. Please do not reply to this email.</p>
+        </body>
+        </html>
+    """
+    )
 
     // Alternative message
     htmlEmail.setTextMsg("Your email client does not support HTML messages")
