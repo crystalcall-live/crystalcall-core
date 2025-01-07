@@ -157,7 +157,7 @@ paths:
           description: OK
         400:
           description: Bad Request
-  /password/reset/change:
+  /password/change:
     post:
       tags:
         - Authentication & Authorisation
