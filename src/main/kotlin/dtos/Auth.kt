@@ -50,3 +50,10 @@ data class PasswordResetConfirmPayload(
     val newPassword: String,
     val confirmNewPassword: String
 )
+
+@Serializable
+data class PasswordResetChangePayload(
+    val oldPassword: String,
+    val newPassword: String,
+    val confirmNewPassword: String
+)

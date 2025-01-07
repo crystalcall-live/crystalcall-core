@@ -157,5 +157,34 @@ paths:
           description: OK
         400:
           description: Bad Request
+  /password/reset/change:
+    post:
+      tags:
+        - Authentication & Authorisation
+      summary: Change password
+      description: Changes password
+      produces:
+        - application/json
+      parameters:
+        - in: formData
+          name: oldPassword
+          description: User's old password
+          required: true
+          type: string
+        - in: formData
+          name: newPassword
+          description: User's new password
+          required: true
+          type: string
+        - in: formData
+          name: confirmNewPassword
+          description: Confirm user's new password
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+        400:
+          description: Bad Request
 components:
   schemas: { }

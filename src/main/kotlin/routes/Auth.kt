@@ -9,6 +9,8 @@ import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.*
 import io.ktor.server.plugins.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -200,4 +202,44 @@ fun Route.authRouting() {
             }
         }
     }
+    authenticate {
+        route("/v1/password/change") {
+            post {
+                try {
+                    val data = call.receive<PasswordResetChangePayload>()
+                    val principal = call.principal<JWTPrincipal>()
+                    val userClaim = principal?.payload?.claims?.get("user")
+                    val email = userClaim!!.asMap()["email"].toString()
+
+                    val user = transaction {
+                        Users.selectAll().where { Users.email eq email }.withDistinct().firstOrNull()
+                    }
+                    if (user == null) {
+                        call.respond(
+                            status = HttpStatusCode.NotFound,
+                            Response.GenericResponse(status = "error", message = "Invalid user")
+                        )
+                    }
+
+                    val pwdIsValid = BCrypt.checkpw(data.oldPassword, user!![Users.password])
+                    if (!pwdIsValid || data.newPassword != data.confirmNewPassword) {
+                        Response.GenericResponse(status = "error", message = "Invalid password!")
+                    }
+
+                    call.respond(
+                        status = HttpStatusCode.OK,
+                        Response.GenericResponse(status = "success", message = "Password changed successfully!")
+                    )
+
+
+                } catch (e: BadRequestException) {
+                    call.respond(
+                        status = HttpStatusCode.BadRequest,
+                        Response.GenericResponse(status = "error", message = "Invalid request: ${e.message}")
+                    )
+                }
+            }
+        }
+    }
+
 }
