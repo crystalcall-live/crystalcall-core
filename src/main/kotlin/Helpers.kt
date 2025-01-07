@@ -96,7 +96,8 @@ fun sendEmail(email: String, name: String) {
         Use a strong password that you haven't used before.
         Never share your password with anyone</p>
         
-        <p>If you have any issues or didn't request this reset, please contact our support team immediately at support@crystalcall.live.</p>
+        <p>If you have any issues or didn't request this reset, please contact our support team immediately at 
+        <a href='mailto:support@crystalcall.live'>support@crystalcall.live</a>.</p>
         
         <div style="margin-top: 20px; line-height: 0.8;">
             <p style="margin: 8px 0;">Best regards,</p>
