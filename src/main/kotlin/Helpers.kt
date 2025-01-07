@@ -75,7 +75,7 @@ fun sendEmail(email: String, name: String) {
     htmlEmail.setFrom("MS_0i0uEB@daimones.xyz", "CrystalCall")
     htmlEmail.setSubject("CrystalCall: Reset Your Password")
 
-    htmlEmail.setHtmlMsg("<html><body><p>Please create new password: <a href='https://crystalcall.daimones.xyz/auth/forgot-password/${email}'>https://crystalcall.daimones.xyz/auth/forgot-password/${email}</a></p></body></html>")
+    htmlEmail.setHtmlMsg("<html><body><p>Please create new password: <a href='https://crystalcall.daimones.xyz/auth/forgot-password?id=${email}'>https://crystalcall.daimones.xyz/auth/forgot-password?id=${email}</a></p></body></html>")
 
     // Alternative message
     htmlEmail.setTextMsg("Your email client does not support HTML messages")
