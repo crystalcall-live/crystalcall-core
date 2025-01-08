@@ -9,7 +9,6 @@ exposed-version = "0.57.0"
 slf4j-api-version = "1.7.32"
 commons-email2-javax-version = "2.0.0-M1"
 
-
 [libraries]
 ktor-server-core = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktor-version" }
 ktor-server-websockets = { module = "io.ktor:ktor-server-websockets-jvm", version.ref = "ktor-version" }
