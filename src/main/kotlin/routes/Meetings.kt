@@ -1,6 +1,6 @@
 package routes
 
-import dtos.MeetingDTO
+import daos.createMeeting
 import dtos.Response
 import generateMeetingLink
 import io.ktor.http.*
@@ -24,15 +24,17 @@ fun Route.meetingsRouting() {
                 }
 
                 val meetingLink = generateMeetingLink()
+                val email = userClaim!!.asMap()["email"].toString()
 
-                call.respond(
-                    status = HttpStatusCode.OK,
-                    Response.MeetingResponse(
-                        status = "success",
-                        message = "Meeting scheduled successfully!",
-                        data = MeetingDTO(link = meetingLink)
-                    )
-                )
+                val response = createMeeting(email, meetingLink)
+
+                if (response.status == "success") {
+                    call.respond(status = HttpStatusCode.OK, response)
+                } else {
+                    call.respond(status = HttpStatusCode.UnprocessableEntity, response)
+                }
+
+
             }
         }
     }
