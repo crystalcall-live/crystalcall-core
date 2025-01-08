@@ -1,15 +1,13 @@
 package daos
 
-import dtos.Response
-import dtos.SigninDTO
-import dtos.SignupDTO
-import dtos.UserDTO
+import dtos.*
 import generateTokens
 import models.Users
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
 import org.mindrot.jbcrypt.BCrypt
 import java.time.LocalDateTime
 
@@ -93,6 +91,19 @@ fun createUser(data: SignupDTO): Pair<Response, String?> {
             ), token.first
         )
     } catch (e: ExposedSQLException) {
-        return Pair(Response.GenericResponse(status = "error", message = "DB error: $e"), null)
+        return Pair(Response.GenericResponse(status = "error", message = "User already exists!"), null)
+    }
+}
+
+fun updatePassword(email: String, data: PasswordResetConfirmPayload): Response {
+    try {
+        transaction {
+            Users.update({ Users.email eq email }) {
+                it[password] = BCrypt.hashpw(data.newPassword, BCrypt.gensalt())
+            }
+        }
+        return Response.GenericResponse(status = "success", message = "Password resetted successfully!")
+    } catch (e: ExposedSQLException) {
+        return Response.GenericResponse(status = "error", message = "Failed update: ${e.message}")
     }
 }

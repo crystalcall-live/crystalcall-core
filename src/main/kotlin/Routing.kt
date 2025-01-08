@@ -20,7 +20,7 @@ fun Application.configureRouting() {
         get("/documentation.yaml") {
             call.respondFile(File("src/main/resources/openapi/documentation.yaml"))
         }
-
+        
         authRouting()
         meetingsRouting()
     }

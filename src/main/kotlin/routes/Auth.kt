@@ -3,6 +3,7 @@ package routes
 import Config
 import daos.createUser
 import daos.loginUser
+import daos.updatePassword
 import dtos.*
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
@@ -20,7 +21,6 @@ import kotlinx.serialization.json.Json
 import models.Users
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.update
 import org.mindrot.jbcrypt.BCrypt
 import refreshAccessToken
 import sendEmail
@@ -47,7 +47,10 @@ fun Route.authRouting() {
                             expires = Instant.now().plusSeconds(259200).toGMTDate()
                         )
                     )
+
                     call.respond(status = HttpStatusCode.OK, response.first)
+                } else if (response.first.message.contains("email")) {
+                    call.respond(status = HttpStatusCode.UnprocessableEntity, response.first)
                 } else {
                     call.respond(status = HttpStatusCode.NotFound, response.first)
                 }
@@ -80,7 +83,7 @@ fun Route.authRouting() {
                     )
                     call.respond(status = HttpStatusCode.Created, response.first)
                 } else {
-                    call.respond(status = HttpStatusCode.UnprocessableEntity, response.first)
+                    call.respond(status = HttpStatusCode.NotFound, response.first)
                 }
             } catch (e: BadRequestException) {
                 call.respond(
@@ -186,14 +189,13 @@ fun Route.authRouting() {
                     )
                 }
 
-                Users.update({ Users.email eq call.request.headers["x-pwd-reset"].toString() }) {
-                    it[password] = BCrypt.hashpw(data.newPassword, BCrypt.gensalt())
-                }
+                val response = updatePassword(call.request.headers["x-pwd-reset"].toString(), data)
 
-                call.respond(
-                    status = HttpStatusCode.OK,
-                    Response.GenericResponse(status = "success", message = "Password resetted successfully!")
-                )
+                if (response.status == "success") {
+                    call.respond(status = HttpStatusCode.OK, response)
+                } else {
+                    call.respond(status = HttpStatusCode.UnprocessableEntity, response)
+                }
             } catch (e: BadRequestException) {
                 call.respond(
                     status = HttpStatusCode.BadRequest,
