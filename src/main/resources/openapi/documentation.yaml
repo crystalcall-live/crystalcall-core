@@ -188,5 +188,33 @@ paths:
           description: OK
         400:
           description: Bad Request
+  /meetings:
+    post:
+      tags:
+        - Meetings
+      summary: Schedule meeting session
+      description: Generates meeting link
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+        401:
+          description: Unauthorised
+        409:
+          description: Conflict
+  /settings:
+    get:
+      tags:
+        - Settings
+      summary: Retrieve current user settings
+      description: Retrieves user settings
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+        500:
+          description: Internal Server Error
 components:
   schemas: { }
