@@ -15,7 +15,7 @@ class AuthTest {
     }
 
     @Test
-    fun testLogin() = testApplication {
+    fun testSignin() = testApplication {
         application {
             module(testing = true)
         }
@@ -24,7 +24,6 @@ class AuthTest {
             header(HttpHeaders.ContentType, ContentType.Application.Json)
             setBody(Json.encodeToString(SigninDTO.serializer(), SigninDTO("test@email.com", "password")))
         }
-        println(response.bodyAsText())
         val jsonResponse = json.decodeFromString<Response.AuthResponse>(response.bodyAsText())
         assertEquals(HttpStatusCode.OK, response.status)
         assertEquals("test@email.com", jsonResponse.data.email)
