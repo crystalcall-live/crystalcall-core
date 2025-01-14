@@ -31,7 +31,7 @@ fun Route.meetingsRouting() {
                 if (response.status == "success") {
                     call.respond(status = HttpStatusCode.OK, response)
                 } else {
-                    call.respond(status = HttpStatusCode.UnprocessableEntity, response)
+                    call.respond(status = HttpStatusCode.Conflict, response)
                 }
 
 

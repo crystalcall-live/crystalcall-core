@@ -15,7 +15,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 fun Route.settingsRouting() {
     authenticate {
         route("/v1/settings") {
-            post {
+            get {
                 try {
                     val principal = call.principal<JWTPrincipal>()
                     val userClaim = principal?.payload?.claims?.get("user")
@@ -51,7 +51,7 @@ fun Route.settingsRouting() {
                 } catch (e: ExposedSQLException) {
                     call.respond(
                         status = HttpStatusCode.InternalServerError,
-                        Response.GenericResponse(status = "error", message = "Exposed error: $e")
+                        Response.GenericResponse(status = "error", message = "Database error occurred")
                     )
                 }
 

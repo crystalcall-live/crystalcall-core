@@ -24,7 +24,7 @@ fun createMeeting(email: String, meetingLink: String): Response {
             data = MeetingDTO(link = meetingLink)
         )
     } catch (e: ExposedSQLException) {
-        return Response.GenericResponse(status = "error", message = "Duplicate record exists")
+        return Response.GenericResponse(status = "error", message = "Database error occurred")
     }
 
 }
