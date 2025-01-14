@@ -1,5 +1,6 @@
 import io.ktor.server.application.*
 import models.Meetings
+import models.Settings
 import models.Users
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -19,8 +20,8 @@ fun Application.configureDatabase(testing: Boolean = false) {
     transaction {
         addLogger(StdOutSqlLogger)
 
-        SchemaUtils.drop(Users, Meetings)
-        SchemaUtils.create(Users, Meetings)
+        SchemaUtils.drop(Users, Meetings, Settings)
+        SchemaUtils.create(Users, Meetings, Settings)
 
         try {
             val hashedPwd = BCrypt.hashpw(Config.ADMIN_USER_PASSWORD, BCrypt.gensalt())

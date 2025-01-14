@@ -8,6 +8,11 @@ data class MeetingDTO(
 )
 
 @Serializable
+data class SettingsDTO(
+    val maxParticipantsDisplayedPerScreenInGalleryView: Int
+)
+
+@Serializable
 sealed class Response {
     abstract val status: String
     abstract val message: String
@@ -37,5 +42,12 @@ sealed class Response {
         override val status: String,
         override val message: String,
         val token: String
+    ) : Response()
+
+    @Serializable
+    data class SettingsResponse(
+        override val status: String,
+        override val message: String,
+        val data: SettingsDTO
     ) : Response()
 }
