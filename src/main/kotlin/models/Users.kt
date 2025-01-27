@@ -23,12 +23,13 @@ object Users : IntIdTable() {
 class User(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<User>(Users)
 
-    var email by Users.email
-    var firstName by Users.firstName
-    var lastName by Users.lastName
-    var password by Users.password
-    var isActive by Users.isActive
-    var created by Users.created
-    var modified by Users.modified
-    var currentMeeting by Meeting optionalReferencedOn Users.currentMeeting
+    val email by Users.email
+    val firstName by Users.firstName
+    val lastName by Users.lastName
+    val password by Users.password
+    val isActive by Users.isActive
+    val created by Users.created
+    val modified by Users.modified
+    val currentMeeting by Meeting optionalReferencedOn Users.currentMeeting
+
 }

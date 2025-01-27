@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class MeetingDTO(
+    val title: String? = null,
     val link: String
 )
 
