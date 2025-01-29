@@ -188,7 +188,7 @@ paths:
           description: OK
         400:
           description: Bad Request
-  /meetings:
+  /meetings/schedule:
     post:
       tags:
         - Meetings
@@ -196,6 +196,17 @@ paths:
       description: Generates meeting link
       produces:
         - application/json
+      parameters:
+        - in: formData
+          name: title
+          description: Title of the meeting room
+          required: false
+          type: string
+        - in: formData
+          name: username
+          description: Name of the user
+          required: true
+          type: string
       responses:
         200:
           description: OK
