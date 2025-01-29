@@ -29,7 +29,7 @@ fun Route.meetingsRouting() {
                 val meetingLink = generateMeetingLink()
                 val email = userClaim!!.asMap()["email"].toString()
 
-                val response = createMeeting(email, meetingLink, data.title)
+                val response = createMeeting(email, meetingLink, data.title, data.username)
 
                 if (response.status == "success") {
                     call.respond(status = HttpStatusCode.OK, response)

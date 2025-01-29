@@ -11,6 +11,7 @@ import java.time.LocalDateTime
 
 object Meetings : IntIdTable() {
     val title: Column<String?> = varchar("title", 255).nullable()
+    val username: Column<String> = varchar("username", 255)
     val link: Column<String> = varchar("link", 200)
     val isExpired: Column<Boolean> = bool("is_expired").default(false)
     val created: Column<LocalDateTime> = datetime("created").default(LocalDateTime.now())
@@ -22,6 +23,7 @@ class Meeting(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<Meeting>(Meetings)
 
     val title by Meetings.title
+    val username by Meetings.username
     val link by Meetings.link
     val isExpired by Meetings.isExpired
     val created by Meetings.created
