@@ -8,7 +8,7 @@
 <script src="https://unpkg.com/swagger-ui-dist@4.15.5/swagger-ui-bundle.js" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/swagger-ui-dist@4.15.5/swagger-ui-standalone-preset.js" crossorigin="anonymous"></script>
 <script>
-    window.onload = function() {
+    window.onload = function () {
         window.ui = SwaggerUIBundle({
             url: '/documentation.yaml',
             dom_id: '#swagger-ui',
@@ -16,10 +16,9 @@
                 SwaggerUIBundle.presets.apis,
                 SwaggerUIStandalonePreset
             ],
-            layout: 'StandaloneLayout'
+            layout: 'BaseLayout'
         });
     }
-
 </script>
 </body>
 </html>
