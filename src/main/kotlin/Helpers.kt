@@ -72,7 +72,7 @@ fun sendEmail(email: String, name: String) {
     htmlEmail.setSmtpPort(Config.EMAIL_PORT)
     htmlEmail.setAuthentication(Config.EMAIL_USERNAME, Config.EMAIL_PASSWORD)
     htmlEmail.addTo(email, name)
-    htmlEmail.setFrom("MS_0i0uEB@daimones.xyz", "CrystalCall")
+    htmlEmail.setFrom(Config.FROM_EMAIL, "CrystalCall")
     htmlEmail.setSubject("CrystalCall: Reset Your Password")
 
     val firstName = name.split(" ")[0]
